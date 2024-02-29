@@ -1,27 +1,33 @@
 version: "3"
 
 services:
-  kutt:
-    image: kutt/kutt
+  urlshortener:
+    container_name: urlshortener
+    image: urlshortener
+    build:
+      context: .
+      dockerfile: Dockerfile
     depends_on:
       - postgres
       - redis
     command: ["./wait-for-it.sh", "postgres:5432", "--", "npm", "start"]
     ports:
-      - "3000:3000"
+      - "4000:4000"
     env_file:
       - .env
     environment:
       DB_HOST: postgres
-      DB_NAME: kutt
+      DB_NAME: postgres
       DB_USER: user
       DB_PASSWORD: pass
       REDIS_HOST: redis
+    volumes:
+      - ./:/usr/src/app
 
   redis:
     image: redis:6.0-alpine
     volumes:
-      - redis_data:/data
+      - .redis.cache:/data
 
   postgres:
     image: postgres:12-alpine
@@ -30,8 +36,4 @@ services:
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: kutt
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  redis_data:
-  postgres_data:
+      - .postgres.cache:/var/lib/postgresql/data

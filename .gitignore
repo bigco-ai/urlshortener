@@ -1,5 +1,7 @@
 .env
 .vscode/
+.postgres.cache
+.redis.cache
 logs
 client/.next/
 node_modules/
